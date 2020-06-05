@@ -104,22 +104,35 @@ public class GemCollectorAgent: Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // 속도 인식
-        var localVelocity = transform.InverseTransformDirection(rb.velocity); 
+        
+        
+
+        /*
+        I think it is not necessary for action. 
+        */
+        //var localVelocity = transform.InverseTransformDirection(rb.velocity); 
         //sensor.AddObservation(localVelocity.x);
         //sensor.AddObservation(localVelocity.z);
 
         sensor.AddObservation(this.transform.position); 
         /*
-        circle raycast shoot and find random jewel position then observe distance
+            scf rst.
         */
         firstTargetJewel = rayHitJewel();
         sensor.AddObservation((firstTargetJewel.transform.position - transform.position).normalized);
         sensor.AddObservation(Vector3.Distance(firstTargetJewel.transform.position , transform.position));
         sensor.AddObservation(GameObject.FindGameObjectsWithTag("Jewel").Length);
-        //sensor.AddObservation(TargetCharacter.transform.position);
+        
         sensor.AddObservation(!MoveSwitch); // 스턴 상태 인식
-        //sensor.AddObservation(m_jump); // 점프 상태 인식
+        
+
+        /*
+        Need jump observe adding. but I guess it cost high so that action Jump.
+        So I think it is better to decrease reward when Agent activate jump.
+
+        */
+        //sensor.AddObservation(m_jump); 점프 상태 인식
+        //sensor.AddObservation(TargetCharacter.transform.position);
     }
     public RaycastHit rayHitJewel()
     {
