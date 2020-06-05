@@ -56,7 +56,7 @@ public class GameManager : BaseController
             GameTime -= 1;
             yield return new WaitForSeconds(1);
         }
-        //GemCollectorAgent.instance.EndEpisode();
+        GemCollectorAgent.instance.EndEpisode();
         // 학습환경에서 키기
     }
     private void TimePanelUpdate() 

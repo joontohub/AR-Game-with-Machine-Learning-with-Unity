@@ -58,7 +58,6 @@ public class CharacterController : JoystickValue
     private void FixedUpdate() {
         MoveCharacter();
         var localVelocity = transform.InverseTransformDirection(rb.velocity); 
-        Debug.Log(localVelocity);
     }
     
     public void MoveCharacter()

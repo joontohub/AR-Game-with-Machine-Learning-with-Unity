@@ -4,6 +4,22 @@ using UnityEngine;
 
 public class testMLManager : MonoBehaviour
 {
+    public static testMLManager instance;
+
+    private void Awake() {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else{
+            return;
+        }
+    }
+    private void Start() {
+      
+            Debug.Log(GameObject.FindGameObjectsWithTag("Jewel").Length);
+    
+    }
     public void GameEndChecker() 
     {
         if(GameObject.FindGameObjectsWithTag("Jewel").Length <= 0){

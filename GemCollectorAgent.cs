@@ -48,6 +48,12 @@ public class GemCollectorAgent: Agent
     public JoystickController landJoystick;
     public static  Vector3 dir = Vector3.zero;
 
+
+    public float nowTime;
+    public Vector3 nowPosition;
+    public float compareTime = 0f;
+    public Vector3 comparePosition = Vector3.zero;
+
     private void Awake() {
          if(instance == null)
          {
@@ -64,10 +70,15 @@ public class GemCollectorAgent: Agent
     }
     public override void OnEpisodeBegin()
     {
+        Debug.Log("episode begin!");
+        GameManager.instance.TimeChecker();
         stunPartc.Pause();
         GetJewelPartc.Pause();
+
         //for test deactive
-        MLGameManager.instance.EnvironmentReset();
+        //later activate
+        //MLGameManager.instance.EnvironmentReset();
+        this.gameObject.transform.position = new Vector3(0,0,0);
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -123,18 +134,22 @@ public class GemCollectorAgent: Agent
                 {
                     case 1:
                         dirToGo = transform.forward;
+                        Debug.Log("forward+");
                         break;
                     case 2:
                         dirToGo = -transform.forward;
+                        Debug.Log("forward-");
                         break;
                 }
                 switch(sideAct)
                 {
                     case 1:
                         dirToGo = transform.right;
+                        Debug.Log("right+");
                         break;
                     case 2:
                         dirToGo = -transform.right;
+                        Debug.Log("right-");
                         break;
                 }
                 switch(rotateAct)
@@ -149,7 +164,7 @@ public class GemCollectorAgent: Agent
                 switch(jumpAct)
                 {
                     case 1:
-                        Jump();
+                        //Jump();
                         break;
                     case 2:
                         break;
@@ -166,10 +181,10 @@ public class GemCollectorAgent: Agent
             //}
             //transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
         }
-        if (rb.velocity.sqrMagnitude > 25f) // slow it down
-        {
-            rb.velocity *= 0.95f;
-        }
+        //if (rb.velocity.sqrMagnitude > 10f) // slow it down
+        //{
+        //    rb.velocity *= 0.95f;
+        //}
         if(transform.position.x>30||transform.position.x<-30||
             transform.position.z>30||transform.position.z<-30||
             transform.position.y<-1||transform.position.y>7)
@@ -177,6 +192,32 @@ public class GemCollectorAgent: Agent
             AddReward(-1f);
             EndEpisode();
         }
+    }
+    private void Update() {
+        StatePositionDecreasePoint();
+    }
+    private void StatePositionDecreasePoint()
+    {
+        nowTime = Time.deltaTime;
+        nowPosition = gameObject.transform.position;
+        
+
+        if(compareTime == 0 && comparePosition == Vector3.zero)
+        {
+            compareTime = nowTime + 0.1f;
+            comparePosition = nowPosition;
+        }
+        else if(compareTime < nowTime)
+        {
+            if(comparePosition == nowPosition)
+            {
+                Debug.Log("state decrease Point!");
+                AddReward(-0.1f);
+            }
+            comparePosition = Vector3.zero;
+            compareTime = 0f;
+        }
+        
     }
     IEnumerator CheckJump ()
     {
@@ -205,16 +246,20 @@ public class GemCollectorAgent: Agent
         //    
         //    AudioController.Instance.HitSoundPlay();
         //}    
-        if(other.collider.tag == "Player")
-        {
-            Debug.Log("hitted!!");
-            AudioController.Instance.HittedSoundPlay();
-            HittedByCharacter();
-        }
-        if(other.collider.tag == "map")
-        {
-            anim.SetBool("isGrounded",true);
-        }
+
+
+        /* for ml model testing colliding player off */
+
+        //if(other.collider.tag == "Player")
+        //{
+        //    Debug.Log("hitted!!");
+        //    AudioController.Instance.HittedSoundPlay();
+        //    HittedByCharacter();
+        //}
+        //if(other.collider.tag == "map")
+        //{
+        //    anim.SetBool("isGrounded",true);
+        //}
     }
 
     private void HitCharacter()
@@ -227,14 +272,7 @@ public class GemCollectorAgent: Agent
         {
             isDead = true;
             MoveSwitch = false;
-            if(DataVariables.characterScore >= 10f)
-            {
-                DataVariables.characterScore = DataVariables.characterScore - 10f;
-            }
-            else
-            {
-                DataVariables.characterScore = 0f;
-            }
+
             deathTriggerInt += 1;
             GameManager.instance.ReSpawnCharacter(isDead);
             AudioController.Instance.DeadSoundPlay();
@@ -253,7 +291,7 @@ public class GemCollectorAgent: Agent
                 DataVariables.characterScore += DataVariables.jewel_1_score;
                 other.gameObject.SetActive(false);
                 Debug.Log("Character Score : " +DataVariables.characterScore);
-                AddReward(0.2f); //added
+                AddReward(1f); //added
             }
             if(other.gameObject.name == "1_Jewel(Clone)")
             {
