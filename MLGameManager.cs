@@ -110,7 +110,7 @@ public class MLGameManager : MonoBehaviour
         }
         foreach(GameObject number in Jewels)
         {  
-            Vector3 RandomPos = new Vector3(Random.Range(-38f,38f),5f,Random.Range(-38f,38f));
+            Vector3 RandomPos = new Vector3(Random.Range(-38f,38f),10f,Random.Range(-38f,38f));
             GameObject instance =  Instantiate(number,RandomPos,Quaternion.Euler(90,0,0)) as GameObject;
             instance.transform.parent = JewelParent.transform;
             instance.transform.localScale = instance.transform.localScale * 0.1f *0.8f;
@@ -124,16 +124,16 @@ public class MLGameManager : MonoBehaviour
         EnemyAgent.SetActive(true);
         EnemyAgent.transform.position  = new Vector3 (0,0.5f,0);
     }
-    public void GameEndChecker() 
-    {
-        if(GameObject.FindGameObjectsWithTag("Jewel").Length <= 0){
-            GemCollectorAgent.instance.EndGame();
-        }
-        //another Case is 60 sec over
-    }
-    private void Update() {
-        GameEndChecker();
-    }
+    //public void GameEndChecker() 
+    //{
+    //    if(GameObject.FindGameObjectsWithTag("Jewel").Length <= 0){
+    //        GemCollectorAgent.instance.EndGame();
+    //    }
+    //    //another Case is 60 sec over
+    //}
+    //private void Update() {
+    //    GameEndChecker();
+    //}
     public void ClearReset(GameObject[] gameObjects)
     {
         foreach(GameObject gameObject in gameObjects)

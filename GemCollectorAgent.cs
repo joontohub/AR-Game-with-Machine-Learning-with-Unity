@@ -89,9 +89,8 @@ public class GemCollectorAgent: Agent
         stunPartc.Pause();
         GetJewelPartc.Pause();
 
-        //for test deactive
-        //later activate
-        //MLGameManager.instance.EnvironmentReset();
+       
+        MLGameManager.instance.EnvironmentReset();
         this.gameObject.transform.position = new Vector3(0,0,0);
     }
 

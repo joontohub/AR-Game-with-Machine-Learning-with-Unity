@@ -24,7 +24,7 @@ public class GameManager : BaseController
     public float reSpawnRestTime ;
 
     private bool activeRespawnEnumSwitch;
-
+    private bool EnemyRespawnEnumSwitch;
     private float runTime;
     private float runFillGauge = 1f;
     public Image runFillImage;
@@ -40,6 +40,7 @@ public class GameManager : BaseController
 
     private void Start() {
         DeadActivation += ReSpawnCharacter;
+        DeadActivation += ReSpawnEnemy;
         reSpawnRestTime = reSpawnTime;
         GameTime = 60;
         //TimeChecker(); // 학습환경에서 제외. 실제 게임환경에서 실행
@@ -138,18 +139,29 @@ public class GameManager : BaseController
     {
         if(stat)
         {
-            activeRespawnEnumSwitch = true;
-            //if(GemCollectorAgent.deathTriggerInt >= 1 )
-            //{
-            //    StartCoroutine("RespawnTimeDown");
-            //}
+            EnemyRespawnEnumSwitch = true;
+            if(GemCollectorAgent.deathTriggerInt >= 1 )
+            {
+                StartCoroutine("RespawnTimeEnemyDown");
+            }
             enemyObj.transform.position = new Vector3(0,0,0);
             respawnParc.Play();
             Debug.Log("enemy is dead");
+
         }
         else
         {
             return;
+        }
+    }
+    IEnumerator RespawnTimeEnemyDown()
+    {
+        while(EnemyRespawnEnumSwitch)
+        {
+            yield return new WaitForSeconds(3f);
+            EnemyRespawnEnumSwitch = false;
+            GemCollectorAgent.MoveSwitch = true;
+            GemCollectorAgent.isDead = false;
         }
     }
     public void CharacterRespawnTextUpdate()
