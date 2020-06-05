@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+/* this blinded code is for random instanciate method */
+
 public class JewelController : MonoBehaviour
 {
     private new Rigidbody rigidbody;
@@ -20,6 +24,8 @@ public class JewelController : MonoBehaviour
         else{
             Debug.Log("No rigid");
         }
+
+        rigidbody.useGravity = true;
         Invoke("OffGravity",0.5f);
     }
     private void OffGravity()
@@ -28,38 +34,39 @@ public class JewelController : MonoBehaviour
         rigidbody.isKinematic = true;
         meshCollider.isTrigger = true;
     }
-    private void OnCollisionEnter(Collision other) {
-        if(other.collider.tag== "map" || other.collider.tag =="slope" || other.collider.tag =="mineCart")
-        {
-            Debug.Log(other);
-            Debug.Log("this is Collision");
-            rigidbody.useGravity = false;
-            rigidbody.isKinematic = true;
 
-            if(y < 0)
-            {
-                y = 0.3f;
-            }
-        }
-    }
-    private void OnTriggerEnter(Collider other) {
-        if(other.tag == "map")
-        {
-            Debug.Log(other);
-            Debug.Log("this is Trigger");
-            rigidbody.useGravity = false;
-            rigidbody.isKinematic = true;
 
-            if(y < 0)
-            {
-                
-                y = 0.3f;
-            }
-        }
-    }
+    //private void OnCollisionEnter(Collision other) {
+    //    if(other.collider.tag== "map" || other.collider.tag =="slope" || other.collider.tag =="mineCart")
+    //    {
+    //        Debug.Log(other);
+    //        Debug.Log("this is Collision");
+    //        rigidbody.useGravity = false;
+    //        rigidbody.isKinematic = true;
+//
+    //        if(y < 0)
+    //        {
+    //            y = 0.3f;
+    //        }
+    //    }
+    //}
+    //private void OnTriggerEnter(Collider other) {
+    //    if(other.tag == "map")
+    //    {
+    //        Debug.Log(other);
+    //        Debug.Log("this is Trigger");
+    //        rigidbody.useGravity = false;
+    //        rigidbody.isKinematic = true;
+//
+    //        if(y < 0)
+    //        {
+    //            
+    //            y = 0.3f;
+    //        }
+    //    }
+    //}
     void FixedUpdate()
     {
-        Debug.Log(y);
         transform.Rotate(new Vector3(0f,0f,30f) * Time.deltaTime);
     }
     

@@ -60,6 +60,10 @@ public class GemCollectorAgent: Agent
 
 
     public Vector3 MLdir;
+    public RaycastHit firstTargetJewel;
+
+    RaycastHit[] hits;
+    
     public void GetJoyValue()
     {
         horizontal = landJoystick.GetHorizontalValue();
@@ -89,8 +93,12 @@ public class GemCollectorAgent: Agent
         stunPartc.Pause();
         GetJewelPartc.Pause();
 
-       
-        MLGameManager.instance.EnvironmentReset();
+        //this is for random environment building.
+        //but it cost very high thus it would be necessary to fix random method code.
+        //only can produce model in desktop with GPU
+
+        //MLGameManager.instance.EnvironmentReset();
+        testMLManager.instance.testResetEnv();
         this.gameObject.transform.position = new Vector3(0,0,0);
     }
 
@@ -98,14 +106,37 @@ public class GemCollectorAgent: Agent
     {
         // 속도 인식
         var localVelocity = transform.InverseTransformDirection(rb.velocity); 
-        sensor.AddObservation(localVelocity.x);
-        sensor.AddObservation(localVelocity.z);
+        //sensor.AddObservation(localVelocity.x);
+        //sensor.AddObservation(localVelocity.z);
 
-        sensor.AddObservation(this.transform.position); // 현재 위치 인식
-        sensor.AddObservation(TargetCharacter.transform.position);
+        sensor.AddObservation(this.transform.position); 
+        /*
+        circle raycast shoot and find random jewel position then observe distance
+        */
+        firstTargetJewel = rayHitJewel();
+        sensor.AddObservation((firstTargetJewel.transform.position - transform.position).normalized);
+        sensor.AddObservation(Vector3.Distance(firstTargetJewel.transform.position , transform.position));
+        sensor.AddObservation(GameObject.FindGameObjectsWithTag("Jewel").Length);
+        //sensor.AddObservation(TargetCharacter.transform.position);
         sensor.AddObservation(!MoveSwitch); // 스턴 상태 인식
-        sensor.AddObservation(m_jump); // 점프 상태 인식
+        //sensor.AddObservation(m_jump); // 점프 상태 인식
     }
+    public RaycastHit rayHitJewel()
+    {
+        var myTransform = transform;
+        hits = Physics.SphereCastAll(myTransform.position,30,Vector3.up,5);
+        foreach(RaycastHit hit in hits)
+        {
+            if(hit.transform.tag == "Jewel")
+            {
+                Debug.Log(hit.transform.position);
+                return hit;
+            }
+        }
+        return hits[0];
+    }
+    
+
     public override float[] Heuristic()
     {
         var action = new float[2];
@@ -135,6 +166,11 @@ public class GemCollectorAgent: Agent
     public override void OnActionReceived(float[] vectorAction)
     {
         MoveCharacter(vectorAction);
+
+        if(maxStep > 0 )
+        {
+            AddReward(-1f/ maxStep);
+        }
     }
     public void MoveCharacter(float[] act)
     {
@@ -267,7 +303,6 @@ public class GemCollectorAgent: Agent
             comparePosition = Vector3.zero;
             compareTime = 0f;
         }
-        
     }
     IEnumerator CheckJump ()
     {
@@ -324,7 +359,7 @@ public class GemCollectorAgent: Agent
             MoveSwitch = false;
 
             deathTriggerInt += 1;
-            GameManager.instance.ReSpawnCharacter(isDead);
+            GameManager.instance.ReSpawnEnemy(isDead);
             AudioController.Instance.DeadSoundPlay();
             
             AddReward(-1f);
@@ -348,14 +383,14 @@ public class GemCollectorAgent: Agent
                 DataVariables.characterScore += DataVariables.jewel_1_score;
                 other.gameObject.SetActive(false);
                 Debug.Log("Character Score : " +DataVariables.characterScore);
-                AddReward(0.2f); //added
+                AddReward(0.5f); //added
             }
             else if(other.gameObject.name == "2_Jewel(Clone)")
             {
                 DataVariables.characterScore += DataVariables.jewel_2_score;
                 other.gameObject.SetActive(false);
                 Debug.Log("Character Score : " +DataVariables.characterScore);
-                AddReward(0.4f); //added
+                AddReward(0.8f); //added
             }
             else if(other.gameObject.name == "3_Jewel(Clone)")
             {
