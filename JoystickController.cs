@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+
+public class  JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
     private Image bgImg;
     private Image joystickImg;

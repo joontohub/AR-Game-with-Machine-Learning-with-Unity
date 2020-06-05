@@ -54,6 +54,20 @@ public class GemCollectorAgent: Agent
     public float compareTime = 0f;
     public Vector3 comparePosition = Vector3.zero;
 
+    public static float horizontal;
+    public static float vertical;
+    public Vector3 HeurisDir = Vector3.zero;
+
+
+    public Vector3 MLdir;
+    public void GetJoyValue()
+    {
+        horizontal = landJoystick.GetHorizontalValue();
+        vertical = landJoystick.GetVerticalValue();  
+
+        HeurisDir.x = horizontal;
+        HeurisDir.z = vertical;  
+    }
     private void Awake() {
          if(instance == null)
          {
@@ -95,12 +109,28 @@ public class GemCollectorAgent: Agent
     }
     public override float[] Heuristic()
     {
-        var action = new float[4];
-        action[0] = landJoystick.GetHorizontalValue();
-        action[1] = landJoystick.GetVerticalValue();  
-
-        dir.x = action[0];
-        dir.z = action[1];  
+        var action = new float[2];
+        if(MoveSwitch)
+        {
+            GetJoyValue(); 
+            action[0] = HeurisDir.x;
+            action[1] = HeurisDir.z;
+            //if(walkSwitch)
+            //{
+            //    movementSpeed = walkSpeed;
+            //}
+            //if(runSwitch)
+            //{
+            //    movementSpeed = runSpeed;
+            //}
+            //Vector3 movement = new Vector3(horizontal, 0.0f, vertical);
+            //anim.SetFloat("Speed", movementSpeed * (Mathf.Abs(horizontal) + Mathf.Abs(vertical)));
+            //if (movement != Vector3.zero)
+            //{
+            //    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15f);
+            //}
+            //transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
+        }
         return action;
     }
     public override void OnActionReceived(float[] vectorAction)
@@ -111,87 +141,108 @@ public class GemCollectorAgent: Agent
     {
         if(MoveSwitch)
         {
-            Vector3 dirToGo = Vector3.zero;
-            Vector3 rotateDir = Vector3.zero;
-
-            if(walkSwitch || runSwitch)
+            GetJoyValue(); 
+            MLdir.x = Mathf.Clamp(act[0],-1,1);
+            MLdir.z = Mathf.Clamp(act[1],-1,1);
+            if(walkSwitch)
             {
-                if(walkSwitch)
-                {
-                    movementSpeed = walkSpeed;
-                }
-                else if(runSwitch)
-                {
-                    movementSpeed = runSpeed;
-                }
-
-                int forwardAct = (int)act[0];
-                int sideAct = (int)act[1];
-                int rotateAct = (int)act[2];
-                int jumpAct = (int)act[3];
-
-                switch (forwardAct)
-                {
-                    case 1:
-                        dirToGo = transform.forward;
-                        Debug.Log("forward+");
-                        break;
-                    case 2:
-                        dirToGo = -transform.forward;
-                        Debug.Log("forward-");
-                        break;
-                }
-                switch(sideAct)
-                {
-                    case 1:
-                        dirToGo = transform.right;
-                        Debug.Log("right+");
-                        break;
-                    case 2:
-                        dirToGo = -transform.right;
-                        Debug.Log("right-");
-                        break;
-                }
-                switch(rotateAct)
-                {
-                    case 1:
-                        rotateDir = -transform.up;
-                        break;
-                    case 2:
-                        rotateDir = transform.up;
-                        break;
-                }
-                switch(jumpAct)
-                {
-                    case 1:
-                        //Jump();
-                        break;
-                    case 2:
-                        break;
-                }
-                rb.AddForce(dirToGo * movementSpeed, ForceMode.VelocityChange);
-                transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
+                movementSpeed = walkSpeed;
             }
-           
-            //Vector3 movement = new Vector3(dir.x, 0.0f, dir.z);
-            anim.SetFloat("Speed", movementSpeed * (Mathf.Abs(dir.x) + Mathf.Abs(dir.z)));
-            //if (movement != Vector3.zero)
-            //{
-            //    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15f);
-            //}
-            //transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
+            if(runSwitch)
+            {
+                movementSpeed = runSpeed;
+            }
+            Vector3 movement = new Vector3(MLdir.x, 0.0f, MLdir.z);
+            anim.SetFloat("Speed", movementSpeed * (Mathf.Abs(MLdir.x) + Mathf.Abs(MLdir.z)));
+            if (movement != Vector3.zero)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15f);
+            }
+            transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
         }
-        //if (rb.velocity.sqrMagnitude > 10f) // slow it down
+        //if(MoveSwitch)
         //{
-        //    rb.velocity *= 0.95f;
+        //    Vector3 dirToGo = Vector3.zero;
+        //    Vector3 rotateDir = Vector3.zero;
+//
+        //    if(walkSwitch || runSwitch)
+        //    {
+        //        if(walkSwitch)
+        //        {
+        //            movementSpeed = walkSpeed;
+        //        }
+        //        else if(runSwitch)
+        //        {
+        //            movementSpeed = runSpeed;
+        //        }
+//
+        //        int forwardAct = (int)act[0];
+        //        int sideAct = (int)act[1];
+        //        int rotateAct = (int)act[2];
+        //        int jumpAct = (int)act[3];
+//
+        //        switch (forwardAct)
+        //        {
+        //            case 1:
+        //                dirToGo = transform.forward;
+        //                Debug.Log("forward+");
+        //                break;
+        //            case 2:
+        //                dirToGo = -transform.forward;
+        //                Debug.Log("forward-");
+        //                break;
+        //        }
+        //        switch(sideAct)
+        //        {
+        //            case 1:
+        //                dirToGo = transform.right;
+        //                Debug.Log("right+");
+        //                break;
+        //            case 2:
+        //                dirToGo = -transform.right;
+        //                Debug.Log("right-");
+        //                break;
+        //        }
+        //        switch(rotateAct)
+        //        {
+        //            case 1:
+        //                rotateDir = -transform.up;
+        //                break;
+        //            case 2:
+        //                rotateDir = transform.up;
+        //                break;
+        //        }
+        //        switch(jumpAct)
+        //        {
+        //            case 1:
+        //                //Jump();
+        //                break;
+        //            case 2:
+        //                break;
+        //        }
+        //        rb.AddForce(dirToGo * movementSpeed, ForceMode.VelocityChange);
+        //        transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
+        //    }
+        //   
+        //    //Vector3 movement = new Vector3(dir.x, 0.0f, dir.z);
+        //    anim.SetFloat("Speed", movementSpeed * (Mathf.Abs(dirToGo.x) + Mathf.Abs(dirToGo.z)));
+        //    //if (movement != Vector3.zero)
+        //    //{
+        //    //    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15f);
+        //    //}
+        //    //transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
         //}
-        if(transform.position.x>30||transform.position.x<-30||
-            transform.position.z>30||transform.position.z<-30||
-            transform.position.y<-1||transform.position.y>7)
-        {
-            AddReward(-1f);
-            EndEpisode();
-        }
+        ////if (rb.velocity.sqrMagnitude > 10f) // slow it down
+        ////{
+        ////    rb.velocity *= 0.95f;
+        ////}
+        //if(transform.position.x>30||transform.position.x<-30||
+        //    transform.position.z>30||transform.position.z<-30||
+        //    transform.position.y<-1||transform.position.y>7)
+        //{
+        //    AddReward(-1f);
+        //    EndEpisode();
+        //}
     }
     private void Update() {
         StatePositionDecreasePoint();
