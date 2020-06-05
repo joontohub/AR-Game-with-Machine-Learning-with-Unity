@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameManager : BaseController
 {
     public GameObject CharacterObj;
+    public GameObject enemyObj;
     public delegate void DeadChecker(bool stat);
     public static event DeadChecker DeadActivation;
 
@@ -120,13 +121,31 @@ public class GameManager : BaseController
         if(stat)
         {
             activeRespawnEnumSwitch = true;
-            if(CharacterController.deathTriggerInt ==1 )
+            if(CharacterController.deathTriggerInt >= 1 )
             {
                 StartCoroutine("RespawnTimeDown");
             }
             CharacterObj.transform.position = new Vector3(0,0,0);
             respawnParc.Play();
             Debug.Log("character is dead");
+        }
+        else
+        {
+            return;
+        }
+    }
+    public void ReSpawnEnemy(bool stat)
+    {
+        if(stat)
+        {
+            activeRespawnEnumSwitch = true;
+            //if(GemCollectorAgent.deathTriggerInt >= 1 )
+            //{
+            //    StartCoroutine("RespawnTimeDown");
+            //}
+            enemyObj.transform.position = new Vector3(0,0,0);
+            respawnParc.Play();
+            Debug.Log("enemy is dead");
         }
         else
         {

@@ -164,7 +164,7 @@ public class GemCollectorAgent: Agent
         //{
         //    Vector3 dirToGo = Vector3.zero;
         //    Vector3 rotateDir = Vector3.zero;
-//
+        //
         //    if(walkSwitch || runSwitch)
         //    {
         //        if(walkSwitch)
@@ -175,12 +175,12 @@ public class GemCollectorAgent: Agent
         //        {
         //            movementSpeed = runSpeed;
         //        }
-//
+        //
         //        int forwardAct = (int)act[0];
         //        int sideAct = (int)act[1];
         //        int rotateAct = (int)act[2];
         //        int jumpAct = (int)act[3];
-//
+        //
         //        switch (forwardAct)
         //        {
         //            case 1:
@@ -370,16 +370,16 @@ public class GemCollectorAgent: Agent
         {
             isDead = true;
             MoveSwitch = false;
-            if(DataVariables.characterScore >= 10f)
+            if(DataVariables.enemyScore >= 10f)
             {
-                DataVariables.characterScore = DataVariables.characterScore - 10f;
+                DataVariables.enemyScore = DataVariables.enemyScore - 10f;
             }
             else
             {
-                DataVariables.characterScore = 0f;
+                DataVariables.enemyScore = 0f;
             }
             deathTriggerInt += 1;
-            GameManager.instance.ReSpawnCharacter(isDead);
+            GameManager.instance.ReSpawnEnemy(isDead);
             AudioController.Instance.DeadSoundPlay();
             AddReward(-1f); //added
         }
