@@ -448,6 +448,9 @@ public class GemCollectorAgent: Agent
         stunPartc.Play();
         MoveSwitch = false;
         yield return new WaitForSeconds(3);
+        
+
+        //when making base model just active off opponent object.
         AddReward(-0.05f); //added
 
         MoveSwitch = true;
