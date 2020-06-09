@@ -20,10 +20,10 @@ public class RandomRespawn : MonoBehaviour
         Obstacles = GameObject.FindWithTag("RespawnObstacle");
         RespawnToWorldIn3DGame();
         Invoke("CharacterRespawn", 1f);
+        
     }
     public void RespawnToWorldIn3DGame()
     {
-
         foreach(GameObject number in Clouds)
         {   
             Vector3 RandomPos = new Vector3(Random.Range(-38f,38f),Random.Range(8f,20f),Random.Range(-38f,38f));
@@ -91,6 +91,7 @@ public class RandomRespawn : MonoBehaviour
             instance.transform.localPosition = instance.transform.localPosition * 0.1f * 0.8f;
         }
     }
+
     public void CharacterRespawn() 
     {
         Character.SetActive(true);

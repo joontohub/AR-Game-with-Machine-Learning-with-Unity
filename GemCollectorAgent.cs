@@ -85,6 +85,7 @@ public class GemCollectorAgent: Agent
         TargetCharacterRigidbody = TargetCharacter.GetComponent<Rigidbody>();
         stunPartc.Pause();
         GetJewelPartc.Pause();
+
     }
     public override void OnEpisodeBegin()
     {
@@ -98,7 +99,9 @@ public class GemCollectorAgent: Agent
         //only can produce model in desktop with GPU
 
         //MLGameManager.instance.EnvironmentReset();
-        testMLManager.instance.testResetEnv();
+        MLGameManager.instance.RandomPositioning();
+        
+        //testMLManager.instance.testResetEnv();
         this.gameObject.transform.position = new Vector3(0,0,0);
     }
 
@@ -396,7 +399,7 @@ public class GemCollectorAgent: Agent
                 DataVariables.characterScore += DataVariables.jewel_1_score;
                 other.gameObject.SetActive(false);
                 Debug.Log("Character Score : " +DataVariables.characterScore);
-                AddReward(0.5f); //added
+                AddReward(0.6f); //added
             }
             else if(other.gameObject.name == "2_Jewel(Clone)")
             {

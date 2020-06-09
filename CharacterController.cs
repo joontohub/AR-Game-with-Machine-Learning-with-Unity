@@ -98,7 +98,8 @@ public class CharacterController : JoystickValue
             anim.SetTrigger(pushHash);
             if(DataVariables.isVibrateOn)
             {
-                Handheld.Vibrate();
+                //testing in PC it is offed
+                //Handheld.Vibrate();
             }
             HitEnemy();
             
