@@ -5,11 +5,11 @@ using MLAgents;
 using MLAgents.Sensors;
    
    
-public class GemCollectorAgent: Agent
+public class AttackAgentController: Agent
 {
     public GameObject TargetCharacter;
     
-    public static GemCollectorAgent instance;
+    public static AttackAgentController instance;
     int pushHash = Animator.StringToHash("Push");
     int pickUpHash = Animator.StringToHash("Pickup");
     int runStateHash = Animator.StringToHash("Base Layer.Walking");
@@ -90,7 +90,7 @@ public class GemCollectorAgent: Agent
     public override void OnEpisodeBegin()
     {
         Debug.Log("episode begin!");
-        
+
         stunPartc.Pause();
         GetJewelPartc.Pause();
 
@@ -98,19 +98,11 @@ public class GemCollectorAgent: Agent
         //but it cost very high thus it would be necessary to fix random method code.
         //only can produce model in desktop with GPU
 
-
-        /* 
-
-        Below RandomPositioning, TimeChecker  codes should be the one in game.
-        so when I make an model, I should delete this code the other scripts.
-        
-        
-        */
         //MLGameManager.instance.EnvironmentReset();
-        MLGameManager.instance.RandomPositioning();
-        GameManager.instance.TimeChecker();
 
-
+        //GameManager.instance.TimeChecker();
+        //MLGameManager.instance.RandomPositioning();
+        
         //testMLManager.instance.testResetEnv();
         this.gameObject.transform.position = new Vector3(0,0,0);
     }
@@ -131,6 +123,15 @@ public class GemCollectorAgent: Agent
         /*
             scf rst.
         */
+
+        //add targetPosition. this is Vector 3 so I have to add more 3 Vector Observation Space Size.
+        
+        //this code is occuring an error that is preventing the movement of the Agents.
+        //that's because Observation Space size is over 8. (10)
+        //so I solved this problem with Normalized Position difference.
+        //sensor.AddObservation(TargetCharacter.transform.position);
+        sensor.AddObservation((TargetCharacter.transform.position - transform.position).normalized);
+
         firstTargetJewel = rayHitJewel();
         sensor.AddObservation((firstTargetJewel.transform.position - transform.position).normalized);
         sensor.AddObservation(Vector3.Distance(firstTargetJewel.transform.position , transform.position));
@@ -361,12 +362,15 @@ public class GemCollectorAgent: Agent
 
         /* for ml model testing colliding player off */
 
-        //if(other.collider.tag == "Player")
-        //{
-        //    Debug.Log("hitted!!");
-        //    AudioController.Instance.HittedSoundPlay();
-        //    HittedByCharacter();
-        //}
+        if(other.collider.tag == "Player")
+        {
+            anim.SetTrigger(pushHash);
+            HitCharacter();
+            AddReward(0.8f);
+            //should be added + UI points. 
+            //because the game is played with real points.
+            AudioController.Instance.HitSoundPlay();        
+        }
         //if(other.collider.tag == "map")
         //{
         //    anim.SetBool("isGrounded",true);
@@ -387,10 +391,11 @@ public class GemCollectorAgent: Agent
             MoveSwitch = false;
 
             deathTriggerInt += 1;
-            GameManager.instance.ReSpawnEnemy(isDead);
+            GameManager.instance.ReSpawnAttackAgent(isDead);
             AudioController.Instance.DeadSoundPlay();
             
             AddReward(-1f);
+            EndEpisode();
         }
         if(other.tag == "Jewel")
         {
@@ -440,7 +445,7 @@ public class GemCollectorAgent: Agent
                 DataVariables.enemyScore = 0f;
             }
             deathTriggerInt += 1;
-            GameManager.instance.ReSpawnEnemy(isDead);
+            GameManager.instance.ReSpawnAttackAgent(isDead);
             AudioController.Instance.DeadSoundPlay();
             AddReward(-1f); //added
         }
@@ -462,7 +467,6 @@ public class GemCollectorAgent: Agent
         
 
         //when making base model just active off opponent object.
-        AddReward(-0.05f); //added
 
         MoveSwitch = true;
         stunPartc.Stop();

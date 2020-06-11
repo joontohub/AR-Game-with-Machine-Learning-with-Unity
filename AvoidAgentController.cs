@@ -5,18 +5,18 @@ using MLAgents;
 using MLAgents.Sensors;
    
    
-public class GemCollectorAgent: Agent
+public class AvoidAgentController : Agent
 {
     public GameObject TargetCharacter;
     
-    public static GemCollectorAgent instance;
+    public static AvoidAgentController instance;
     int pushHash = Animator.StringToHash("Push");
     int pickUpHash = Animator.StringToHash("Pickup");
     int runStateHash = Animator.StringToHash("Base Layer.Walking");
 
     public bool MoveSwitch = true;
     public bool isDead;
-    public bool runSwitch;
+    private bool runSwitch;
     private bool walkSwitch = true;
     public bool m_jump; // added
 
@@ -42,17 +42,17 @@ public class GemCollectorAgent: Agent
     public ParticleSystem GetJewelPartc;
 
 
-    public static int deathTriggerInt = 0;
+    public int deathTriggerInt = 0;
     public float turnSpeed = 100;
 
     public JoystickController landJoystick;
     public static  Vector3 dir = Vector3.zero;
 
 
-    public float nowTime;
-    public Vector3 nowPosition;
-    public float compareTime = 0f;
-    public Vector3 comparePosition = Vector3.zero;
+    private float nowTime;
+    private Vector3 nowPosition;
+    private float compareTime = 0f;
+    private Vector3 comparePosition = Vector3.zero;
 
     public static float horizontal;
     public static float vertical;
@@ -99,18 +99,18 @@ public class GemCollectorAgent: Agent
         //only can produce model in desktop with GPU
 
 
-        /* 
-
-        Below RandomPositioning, TimeChecker  codes should be the one in game.
-        so when I make an model, I should delete this code the other scripts.
-        
-        
+        /*
+            When I am making an Avoid Model, I should below codes set off.
+            because GemController (base model) already have this codes.
         */
-        //MLGameManager.instance.EnvironmentReset();
-        MLGameManager.instance.RandomPositioning();
-        GameManager.instance.TimeChecker();
+        //MLGameManager.instance.RandomPositioning();
+        //GameManager.instance.TimeChecker();
 
 
+
+        //    MLGameManager.instance.EnvironmentReset();
+        
+        
         //testMLManager.instance.testResetEnv();
         this.gameObject.transform.position = new Vector3(0,0,0);
     }
@@ -128,6 +128,17 @@ public class GemCollectorAgent: Agent
         //sensor.AddObservation(localVelocity.z);
 
         sensor.AddObservation(this.transform.position); 
+
+
+
+        //add targetPosition. this is Vector 3 so I have to add more 3 Vector Observation Space Size.
+        
+        //this code is occuring an error that is preventing the movement of the Agents.
+        //that's because Observation Space size is over 8. (10)
+        //so I solved this problem with Normalized Position difference.
+        //sensor.AddObservation(TargetCharacter.transform.position);
+        
+        sensor.AddObservation((TargetCharacter.transform.position - transform.position).normalized);
         /*
             scf rst.
         */
@@ -361,20 +372,17 @@ public class GemCollectorAgent: Agent
 
         /* for ml model testing colliding player off */
 
-        //if(other.collider.tag == "Player")
-        //{
-        //    Debug.Log("hitted!!");
-        //    AudioController.Instance.HittedSoundPlay();
-        //    HittedByCharacter();
-        //}
+        if(other.collider.tag == "Player")
+        {
+            AudioController.Instance.HittedSoundPlay();
+            HittedByCharacter();
+        }
         //if(other.collider.tag == "map")
         //{
         //    anim.SetBool("isGrounded",true);
         //}
     }
 
-    //when I make an attack Model I should add AvoidAgent with TargetCharacter.
-    //Then When I play real game, I should fix this TargetCharacter to Real Player .
     private void HitCharacter()
     {
         TargetCharacterRigidbody.AddForce(transform.forward * 50,ForceMode.Force);
@@ -387,10 +395,10 @@ public class GemCollectorAgent: Agent
             MoveSwitch = false;
 
             deathTriggerInt += 1;
-            GameManager.instance.ReSpawnEnemy(isDead);
+            GameManager.instance.ReSpawnAvoidAgent(isDead);
             AudioController.Instance.DeadSoundPlay();
             
-            AddReward(-1f);
+            AddReward(-1f);        
         }
         if(other.tag == "Jewel")
         {
@@ -440,7 +448,7 @@ public class GemCollectorAgent: Agent
                 DataVariables.enemyScore = 0f;
             }
             deathTriggerInt += 1;
-            GameManager.instance.ReSpawnEnemy(isDead);
+            GameManager.instance.ReSpawnAvoidAgent(isDead);
             AudioController.Instance.DeadSoundPlay();
             AddReward(-1f); //added
         }
@@ -459,10 +467,8 @@ public class GemCollectorAgent: Agent
         stunPartc.Play();
         MoveSwitch = false;
         yield return new WaitForSeconds(3);
-        
-
         //when making base model just active off opponent object.
-        AddReward(-0.05f); //added
+        AddReward(-0.8f); //added
 
         MoveSwitch = true;
         stunPartc.Stop();

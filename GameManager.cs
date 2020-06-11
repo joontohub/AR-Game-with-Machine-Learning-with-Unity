@@ -7,8 +7,12 @@ public class GameManager : BaseController
 {
     public GameObject CharacterObj;
     public GameObject enemyObj;
+    public GameObject AvoidAgentObj;
+    public GameObject AttackAgentObj;
     public delegate void DeadChecker(bool stat);
     public static event DeadChecker DeadActivation;
+    public static event DeadChecker AvoidAgentDeadActivation;
+    public static event DeadChecker AttackAgentDeadActivation;
 
     public static GameManager instance;
     int ClickCount;
@@ -25,6 +29,9 @@ public class GameManager : BaseController
 
     private bool activeRespawnEnumSwitch;
     private bool EnemyRespawnEnumSwitch;
+    private bool AvoidAgentRespawnEnumSwitch;
+    private bool AttackAgentRespawnEnumSwitch;
+
     private float runTime;
     private float runFillGauge = 1f;
     public Image runFillImage;
@@ -41,6 +48,10 @@ public class GameManager : BaseController
     private void Start() {
         DeadActivation += ReSpawnCharacter;
         DeadActivation += ReSpawnEnemy;
+        AvoidAgentDeadActivation += ReSpawnAvoidAgent;
+        AttackAgentDeadActivation += ReSpawnAttackAgent;
+
+
         reSpawnRestTime = reSpawnTime;
         GameTime = 60;
         //TimeChecker(); // 학습환경에서 제외. 실제 게임환경에서 실행
@@ -160,8 +171,71 @@ public class GameManager : BaseController
         {
             yield return new WaitForSeconds(3f);
             EnemyRespawnEnumSwitch = false;
-            GemCollectorAgent.MoveSwitch = true;
-            GemCollectorAgent.isDead = false;
+            GemCollectorAgent.instance.MoveSwitch = true;
+            GemCollectorAgent.instance.isDead = false;
+        }
+    }
+
+    public void ReSpawnAvoidAgent(bool stat)
+    {
+        Debug.Log("asdfsadfasf");
+        if(stat)
+        {
+            AvoidAgentRespawnEnumSwitch = true;
+            if(AvoidAgentController.instance.deathTriggerInt >= 1 )
+            {
+                Debug.Log("intintintintint");
+                StartCoroutine("RespawnTimeAvoidAgentDown");
+            }
+            AvoidAgentObj.transform.position = new Vector3(0,0,0);
+            respawnParc.Play();
+            Debug.Log("enemy is dead");
+
+        }
+        else
+        {
+            return;
+        }
+    }
+    IEnumerator RespawnTimeAvoidAgentDown()
+    {
+        while(AvoidAgentRespawnEnumSwitch)
+        {
+            Debug.Log("123123");
+            yield return new WaitForSeconds(3f);
+            AvoidAgentRespawnEnumSwitch = false;
+            AvoidAgentController.instance.MoveSwitch = true;
+            AvoidAgentController.instance.isDead = false;
+        }
+    }
+
+    public void ReSpawnAttackAgent(bool stat)
+    {
+        if(stat)
+        {
+            EnemyRespawnEnumSwitch = true;
+            if(AttackAgentController.deathTriggerInt >= 1 )
+            {
+                StartCoroutine("RespawnTimeAttackAgentDown");
+            }
+            AttackAgentObj.transform.position = new Vector3(0,0,0);
+            respawnParc.Play();
+            Debug.Log("enemy is dead");
+
+        }
+        else
+        {
+            return;
+        }
+    }
+    IEnumerator RespawnTimeAttackAgentDown()
+    {
+        while(AttackAgentRespawnEnumSwitch)
+        {
+            yield return new WaitForSeconds(3f);
+            AttackAgentRespawnEnumSwitch = false;
+            AttackAgentController.instance.MoveSwitch = true;
+            AttackAgentController.instance.isDead = false;
         }
     }
     public void CharacterRespawnTextUpdate()
