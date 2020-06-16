@@ -40,7 +40,9 @@ public class CharacterController : JoystickValue
 
     public static int deathTriggerInt = 0;
 
-    
+    public static bool AvoidGameSwitch;
+    //for attack model
+    public static bool AttackGameSwitch = true;
     private void Awake() {
         if(instance == null)
         {
@@ -92,7 +94,7 @@ public class CharacterController : JoystickValue
     private void OnCollisionEnter(Collision other) {
    
 
-        if(other.collider.tag == "Enemy")
+        if(other.collider.tag == "Enemy" && AvoidGameSwitch == true)
         {
             Debug.Log("enemy!!");
             anim.SetTrigger(pushHash);
@@ -104,12 +106,16 @@ public class CharacterController : JoystickValue
             HitEnemy();
             
             AudioController.Instance.HitSoundPlay();
-        }    
+        }  
+        else if(other.collider.tag == "Enemy" && AttackGameSwitch == true)
+        {
+            AudioController.Instance.HittedSoundPlay();
+            HittedByEnemy();
+        }
         //학습을 위해 에이전트가 피하도록 
         //if(other.collider.tag == "Enemy2")
         //{
         //    AudioController.Instance.HittedSoundPlay();
-        //    HittedByEnemy();
         //}
         if(other.collider.tag == "map")
         {
@@ -197,7 +203,6 @@ public class CharacterController : JoystickValue
     private void HittedByEnemy()
     {
         StartCoroutine("StunTimeChecker");
-        test_enemyRb.AddForce(transform.forward * 50, ForceMode.Force);
     }
 
 }

@@ -14,6 +14,8 @@ public class GameManager : BaseController
     public static event DeadChecker AvoidAgentDeadActivation;
     public static event DeadChecker AttackAgentDeadActivation;
 
+    
+
     public static GameManager instance;
     int ClickCount;
     private void Awake() {
@@ -38,6 +40,7 @@ public class GameManager : BaseController
     public GameObject runBotton;
     
     public Text ScorePan;
+    public Text AgentScorePan;
     public GameObject RespawnRestTimePan;
     public Text reSpawnText;
 
@@ -80,9 +83,14 @@ public class GameManager : BaseController
     {
         ScorePan.text = "Score : " + DataVariables.characterScore.ToString();
     }
+    private void AgentScoreTextUpdate()
+    {
+        AgentScorePan.text = "Score : " + DataVariables.enemyScore.ToString();
+    }
     private void Update() {
         TimePanelUpdate();
         CharacterScoreTextUpdate();
+        AgentScoreTextUpdate();
         RunChecker();
         RunGaugeUpdate();
         if (Input.GetKeyDown(KeyCode.Escape))

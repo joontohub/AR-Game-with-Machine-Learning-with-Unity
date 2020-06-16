@@ -25,15 +25,15 @@ public class JewelController : MonoBehaviour
             Debug.Log("No rigid");
         }
 
-        rigidbody.useGravity = true;
-        Invoke("OffGravity",0.5f);
+    //    rigidbody.useGravity = true;
+    //    Invoke("OffGravity",0.5f);
     }
-    private void OffGravity()
-    {
-        rigidbody.useGravity = false;
-        rigidbody.isKinematic = true;
-        meshCollider.isTrigger = true;
-    }
+    //private void OffGravity()
+    //{
+    //    rigidbody.useGravity = false;
+    //    rigidbody.isKinematic = true;
+    //    meshCollider.isTrigger = true;
+    //}
 
 
     //private void OnCollisionEnter(Collision other) {

@@ -103,8 +103,8 @@ public class AvoidAgentController : Agent
             When I am making an Avoid Model, I should below codes set off.
             because GemController (base model) already have this codes.
         */
-        //MLGameManager.instance.RandomPositioning();
-        //GameManager.instance.TimeChecker();
+        MLGameManager.instance.RandomPositioning();
+        GameManager.instance.TimeChecker();
 
 
 
@@ -112,7 +112,7 @@ public class AvoidAgentController : Agent
         
         
         //testMLManager.instance.testResetEnv();
-        this.gameObject.transform.position = new Vector3(0,0,0);
+        this.gameObject.transform.position = new Vector3(-0.3f,0,0);
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -138,7 +138,8 @@ public class AvoidAgentController : Agent
         //so I solved this problem with Normalized Position difference.
         //sensor.AddObservation(TargetCharacter.transform.position);
         
-        sensor.AddObservation((TargetCharacter.transform.position - transform.position).normalized);
+        //maybe this code cause bad Learning result.
+        //sensor.AddObservation((TargetCharacter.transform.position - transform.position).normalized);
         /*
             scf rst.
         */

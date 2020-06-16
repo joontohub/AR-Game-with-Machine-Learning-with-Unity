@@ -13,7 +13,7 @@ public class BaseController : MonoBehaviour
         {
             Load();
         }
-        DataVariables.characterPoint += 10;
+        DataVariables.characterPoint += 1000;
         Debug.Log(DataVariables.characterPoint);
         InvokeRepeating("InvokeSave",1f,2f);
     }

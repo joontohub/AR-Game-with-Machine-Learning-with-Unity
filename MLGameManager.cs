@@ -16,7 +16,7 @@ public class MLGameManager : MonoBehaviour
     public GameObject[] MineCarts;
     public GameObject[] Box;
 
-
+    public GameObject TestAvoidObj;
 
 
     public GameObject[] DefaultRandomizedObj;
@@ -26,6 +26,7 @@ public class MLGameManager : MonoBehaviour
     public List<Transform> ChildTransform;
     public GameObject Character;
 
+    public GameObject[] TestJewel;
 
     private void Awake() {
         if(instance == null)
@@ -45,11 +46,15 @@ public class MLGameManager : MonoBehaviour
     }
     public void RandomPositioning()
     {
-        ClearReset(GameObject.FindGameObjectsWithTag("Jewel"));
+        //ClearReset(GameObject.FindGameObjectsWithTag("Jewel"));
         ClearReset(DefaultRandomizedObj);
         Randomize(DefaultRandomizedObj);
         SetOnReset(DefaultRandomizedObj);
-        JewelRandomize();
+        SetOnReset(GameObject.FindGameObjectsWithTag("Jewel"));
+        TestJewelSetOn();
+        CharacterRandomize();
+        //JewelRandomize();
+
     }
     private void Randomize(GameObject[] GameObjects)
     {
@@ -75,6 +80,11 @@ public class MLGameManager : MonoBehaviour
             instance.transform.localScale = instance.transform.localScale * 0.1f *0.8f;
             instance.transform.localPosition = instance.transform.localPosition * 0.1f * 0.8f;
         } 
+    }
+    public void CharacterRandomize(){
+        Vector3 RandomPos = new Vector3(Random.Range(-38f,38f),0f,Random.Range(-38f,38f));
+        Character.transform.position = RandomPos;
+        Character.transform.localPosition = Character.transform.localPosition * 0.1f * 0.8f;
     }
 
 
@@ -190,5 +200,12 @@ public class MLGameManager : MonoBehaviour
         {
             gameObject.SetActive(true);
         } 
+    }
+    public void TestJewelSetOn()
+    {
+        foreach(GameObject jewel in TestJewel)
+        {
+            jewel.SetActive(true);
+        }
     }
 }

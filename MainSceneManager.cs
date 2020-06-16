@@ -10,9 +10,16 @@ public class MainSceneManager : BaseController
     public GameObject StorePanel;
     public static bool isVibOn = true;
     public Text pointText;
+    public void AttackSceneChanger()
+    {
+        CharacterController.AttackGameSwitch = true;
+        SceneManager.LoadScene("AttackGameScene");
+    }
+    
     public void GameSceneChanger()
     {
-        SceneManager.LoadScene("GameScene");
+        CharacterController.AvoidGameSwitch = true;
+        SceneManager.LoadScene("BaseGameScene");
     }
     public void StoreOpenButtonControl()
     {

@@ -63,6 +63,9 @@ public class GemCollectorAgent: Agent
     public RaycastHit firstTargetJewel;
 
     RaycastHit[] hits;
+    private List<RaycastHit> jewelHits;
+    private List<float> hitsJewelPos;
+    
     
     public void GetJoyValue()
     {
@@ -85,7 +88,8 @@ public class GemCollectorAgent: Agent
         TargetCharacterRigidbody = TargetCharacter.GetComponent<Rigidbody>();
         stunPartc.Pause();
         GetJewelPartc.Pause();
-
+        hitsJewelPos = new List<float>();
+        jewelHits = new List<RaycastHit>();
     }
     public override void OnEpisodeBegin()
     {
@@ -155,7 +159,7 @@ public class GemCollectorAgent: Agent
         {
             if(hit.transform.tag == "Jewel")
             {
-                Debug.Log(hit.transform.position);
+                //Debug.Log(hit.transform.position);
                 return hit;
             }
         }
@@ -361,12 +365,21 @@ public class GemCollectorAgent: Agent
 
         /* for ml model testing colliding player off */
 
-        //if(other.collider.tag == "Player")
-        //{
-        //    Debug.Log("hitted!!");
-        //    AudioController.Instance.HittedSoundPlay();
-        //    HittedByCharacter();
-        //}
+        if(other.collider.name == "Character" && CharacterController.AvoidGameSwitch == true)
+        {
+            Debug.Log("hitted!!");
+            AddReward(-0.5f); //added
+            AudioController.Instance.HittedSoundPlay();
+            HittedByCharacter();
+        }
+        if(other.collider.name == "Character" && CharacterController.AttackGameSwitch == true)
+        {
+            anim.SetTrigger(pushHash);
+            Debug.Log("hit Character!!");
+            AddReward(+0.5f); //added
+            AudioController.Instance.HitSoundPlay();
+            HitCharacter();
+        }
         //if(other.collider.tag == "map")
         //{
         //    anim.SetBool("isGrounded",true);
@@ -400,30 +413,30 @@ public class GemCollectorAgent: Agent
             //test jewel get collider
             if(other.gameObject.name == "1_Jewel")
             {
-                DataVariables.characterScore += DataVariables.jewel_1_score;
+                DataVariables.enemyScore += DataVariables.jewel_1_score;
                 other.gameObject.SetActive(false);
-                Debug.Log("Character Score : " +DataVariables.characterScore);
+                Debug.Log("Character Score : " +DataVariables.enemyScore);
                 AddReward(1f); //added
             }
             if(other.gameObject.name == "1_Jewel(Clone)")
             {
-                DataVariables.characterScore += DataVariables.jewel_1_score;
+                DataVariables.enemyScore += DataVariables.jewel_1_score;
                 other.gameObject.SetActive(false);
-                Debug.Log("Character Score : " +DataVariables.characterScore);
+                Debug.Log("Character Score : " +DataVariables.enemyScore);
                 AddReward(0.6f); //added
             }
             else if(other.gameObject.name == "2_Jewel(Clone)")
             {
-                DataVariables.characterScore += DataVariables.jewel_2_score;
+                DataVariables.enemyScore += DataVariables.jewel_2_score;
                 other.gameObject.SetActive(false);
-                Debug.Log("Character Score : " +DataVariables.characterScore);
+                Debug.Log("Character Score : " +DataVariables.enemyScore);
                 AddReward(0.8f); //added
             }
             else if(other.gameObject.name == "3_Jewel(Clone)")
             {
-                DataVariables.characterScore += DataVariables.jewel_3_score;
+                DataVariables.enemyScore += DataVariables.jewel_3_score;
                 other.gameObject.SetActive(false);
-                Debug.Log("Character Score : " +DataVariables.characterScore);
+                Debug.Log("Character Score : " +DataVariables.enemyScore);
                 AddReward(1f); //added
             }
         }
@@ -459,10 +472,8 @@ public class GemCollectorAgent: Agent
         stunPartc.Play();
         MoveSwitch = false;
         yield return new WaitForSeconds(3);
-        
-
         //when making base model just active off opponent object.
-        AddReward(-0.05f); //added
+        
 
         MoveSwitch = true;
         stunPartc.Stop();
@@ -470,6 +481,7 @@ public class GemCollectorAgent: Agent
     private void HittedByCharacter()
     {
         StartCoroutine("StunTimeChecker");
+
     }
     public void EndGame(){
         EndEpisode();

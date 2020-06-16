@@ -13,7 +13,7 @@ public class DataVariables : MonoBehaviour
     public static float jewel_3_score = 25;
     public static float enemyScore;
     public static float characterScore;
-    public static float characterPoint;
+    public static float characterPoint = 1000;
     public static bool isVibrateOn;
     public static float SoundVolume = 0.4f;
 }

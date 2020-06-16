@@ -10,8 +10,10 @@ public class ItemsButton : MonoBehaviour
     public Image coin;
     public GameObject popup;
     public Text characterPointtext;
+    public GameObject character;
     //public ColorBlock buttoncolor;
-
+    public GameObject item;
+    public string itemSwitch;
     public void OnClickCheck () {
         if(DataVariables.characterPoint>= 200){
             if(text.text == "Apply"){
@@ -25,4 +27,28 @@ public class ItemsButton : MonoBehaviour
             popup.SetActive(true);
         }
     }
+    public void minus200()
+    {
+        if(DataVariables.characterPoint >= 200)
+        {
+            DataVariables.characterPoint -= 200;
+            character.GetComponent<Animator>().enabled = false;
+        }
+        else{
+            return;
+        }
+    }
+    public void itemOn()
+    {
+        //itemSwitch = item.name;
+    }
+    private void RotateItem()
+    {
+        //item.transform.Rotate(new Vector3(0f,0f,30f) * Time.deltaTime);
+    }
+    public void itemOff()
+    {
+        //item.SetActive(false);
+    }
+  
 }

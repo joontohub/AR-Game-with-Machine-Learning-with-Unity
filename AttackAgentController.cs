@@ -34,9 +34,6 @@ public class AttackAgentController: Agent
     
     private Rigidbody TargetCharacterRigidbody ;
     
-    
-
-
     private float stunTime;
     public ParticleSystem stunPartc;
     public ParticleSystem GetJewelPartc;
