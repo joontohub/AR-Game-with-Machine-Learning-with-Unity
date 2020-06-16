@@ -18,5 +18,4 @@ public class IntroManager : MonoBehaviour
 
         SceneManager.LoadScene(1); // 1: build index of the next scene
     }
-
 }

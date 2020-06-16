@@ -66,6 +66,7 @@ public class GemCollectorAgent: Agent
     private List<RaycastHit> jewelHits;
     private List<float> hitsJewelPos;
     
+    private bool hitChecker;
     
     public void GetJoyValue()
     {
@@ -379,13 +380,23 @@ public class GemCollectorAgent: Agent
             AddReward(+0.5f); //added
             AudioController.Instance.HitSoundPlay();
             HitCharacter();
+            if(hitChecker==false)
+            {
+                DataVariables.enemyScore += 10;
+                hitChecker = true;
+                StartCoroutine("hitTime");
+            }
         }
         //if(other.collider.tag == "map")
         //{
         //    anim.SetBool("isGrounded",true);
         //}
     }
-
+    IEnumerator hitTime()
+    {
+        yield return new WaitForSeconds(3);
+        hitChecker = false;
+    }
     //when I make an attack Model I should add AvoidAgent with TargetCharacter.
     //Then When I play real game, I should fix this TargetCharacter to Real Player .
     private void HitCharacter()

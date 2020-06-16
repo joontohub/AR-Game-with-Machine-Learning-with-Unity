@@ -42,7 +42,8 @@ public class CharacterController : JoystickValue
 
     public static bool AvoidGameSwitch;
     //for attack model
-    public static bool AttackGameSwitch = true;
+    public static bool AttackGameSwitch;
+    public bool enemyhitChecker ;
     private void Awake() {
         if(instance == null)
         {
@@ -104,6 +105,12 @@ public class CharacterController : JoystickValue
                 //Handheld.Vibrate();
             }
             HitEnemy();
+            if(enemyhitChecker == false)
+            {
+                DataVariables.characterScore += 10;
+                enemyhitChecker = true;
+                StartCoroutine("enemyhitTime");
+            }
             
             AudioController.Instance.HitSoundPlay();
         }  
@@ -121,6 +128,11 @@ public class CharacterController : JoystickValue
         {
             anim.SetBool("isGrounded",true);
         }
+    }
+    IEnumerator enemyhitTime()
+    {
+        yield return new WaitForSeconds(3);
+        enemyhitChecker = false;
     }
     private void OnTriggerEnter(Collider other) {
         if(other.tag =="DeathPlane")

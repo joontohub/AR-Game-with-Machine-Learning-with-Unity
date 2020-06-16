@@ -52,7 +52,7 @@ public class MLGameManager : MonoBehaviour
         SetOnReset(DefaultRandomizedObj);
         SetOnReset(GameObject.FindGameObjectsWithTag("Jewel"));
         TestJewelSetOn();
-        CharacterRandomize();
+        //CharacterRandomize();
         //JewelRandomize();
 
     }

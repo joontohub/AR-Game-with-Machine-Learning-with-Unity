@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class GameManager : BaseController
 {
     public GameObject CharacterObj;
@@ -48,6 +48,8 @@ public class GameManager : BaseController
     private int GameTime = 60;
     public ParticleSystem respawnParc;
 
+    public GameObject EndPanel;
+    public Text winText;
     private void Start() {
         DeadActivation += ReSpawnCharacter;
         DeadActivation += ReSpawnEnemy;
@@ -72,8 +74,25 @@ public class GameManager : BaseController
             GameTime -= 1;
             yield return new WaitForSeconds(1);
         }
-        GemCollectorAgent.instance.EndEpisode();
+        EndPanel.SetActive(true);
+        GetWinPanel();
+        //GemCollectorAgent.instance.EndEpisode();
         // 학습환경에서 키기
+    }
+    public void GoMain()
+    {
+        SceneManager.LoadScene("MainScene");
+    }
+    public void GetWinPanel()
+    {
+        if(DataVariables.characterScore > DataVariables.enemyScore)
+        {
+            winText.text = "Player Win " + " Player Score  " + DataVariables.characterScore.ToString() ;
+        }
+        else if(DataVariables.characterScore < DataVariables.enemyScore)
+        {
+            winText.text = "Agent Win "+ " Agent  Score  " + DataVariables.enemyScore.ToString();
+        }
     }
     private void TimePanelUpdate() 
     {

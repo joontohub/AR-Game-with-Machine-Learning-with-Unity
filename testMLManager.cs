@@ -34,7 +34,7 @@ public class testMLManager : MonoBehaviour
     public void GameEndChecker() 
     {
         if(GameObject.FindGameObjectsWithTag("Jewel").Length <= 0){
-            GemCollectorAgent.instance.EndGame();
+            //GemCollectorAgent.instance.EndGame();
         }
         //another Case is 60 sec over
     }

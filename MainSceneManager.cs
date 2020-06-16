@@ -10,6 +10,26 @@ public class MainSceneManager : BaseController
     public GameObject StorePanel;
     public static bool isVibOn = true;
     public Text pointText;
+    public GameObject BellyDancer;
+    public GameObject Character;
+    public void OutGame()
+    {
+        Application.Quit();
+    }
+    public void StoreOpen()
+    {
+        BellyDancer.SetActive(false);
+        Character.SetActive(true);
+    }
+    private void Start() {
+        BaseController.instance.Load();
+        if(DataVariables.characterPoint <= 10)
+        {
+            DataVariables.characterPoint = 1000;
+        }
+        CharacterController.AttackGameSwitch = false;
+        CharacterController.AvoidGameSwitch = false;
+    }
     public void AttackSceneChanger()
     {
         CharacterController.AttackGameSwitch = true;
@@ -58,7 +78,7 @@ public class MainSceneManager : BaseController
     }
     public void PointTextUpdate()
     {
-        pointText.text = "POINT  " + DataVariables.characterPoint.ToString();
+        pointText.text = DataVariables.characterPoint.ToString();
     }
     private void Update() {
         PointTextUpdate();

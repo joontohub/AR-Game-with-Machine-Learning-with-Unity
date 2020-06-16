@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class BaseController : MonoBehaviour
 {
+    public static BaseController instance;
+    private void Awake() {
+        if(instance != this)
+        {
+            instance = this;
+        }
+        else
+        {
+            return;
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
